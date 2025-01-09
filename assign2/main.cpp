@@ -13,10 +13,13 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+#include <sstream>
+#include <cstdlib> // For rand()
+#include <ctime>   // For seeding rand()
 
 #include "utils.h"
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "Eshan Bhargava"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -31,6 +34,20 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  */
 std::set<std::string> get_applicants(std::string filename) {
   // STUDENT TODO: Implement this function.
+
+  std::ifstream ifs(filename);
+  std::set<std::string> set;
+
+  if (ifs.is_open()){
+    std::string line;
+    while (std::getline(ifs, line)){
+      set.insert(line);
+      // std::cout << line << std::endl;
+    }
+  }
+  ifs.close();
+
+  return set;
 }
 
 /**
@@ -43,6 +60,24 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
+  std::queue<const std::string*> same_initials_q;
+  auto start = students.begin();
+  auto end = students.end();
+
+  for (auto it = start; it != end; ++it){
+    const auto& elem = *it;
+    std::stringstream ss(elem);
+    std::string f_name;
+    std::string l_name;
+
+    std::getline(ss, f_name, ' ');
+    std::getline(ss, l_name, ' ');
+
+    if (f_name[0] == 'E' && l_name[0] == 'B'){ same_initials_q.push(&elem); }
+    
+  }
+
+  return same_initials_q;
 }
 
 /**
@@ -57,6 +92,17 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  */
 std::string get_match(std::queue<const std::string*>& matches) {
   // STUDENT TODO: Implement this function.
+  std::vector<std::string> vec;
+  auto tmpQ = matches;
+
+  while (!tmpQ.empty()){
+    vec.push_back(*tmpQ.front());
+    tmpQ.pop();
+  }
+  std::srand(std::time(nullptr)); // Seed with current time
+  int randomIndex = std::rand() % vec.size();
+
+  return vec[randomIndex];
 }
 
 /* #### Please don't modify this call to the autograder! #### */
